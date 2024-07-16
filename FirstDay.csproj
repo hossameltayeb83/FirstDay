@@ -152,6 +152,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Handlers\CategoryHandler.cs" />
+    <Compile Include="Handlers\ItemHandler.cs" />
     <Compile Include="Item.cs">
       <DependentUpon>Models.tt</DependentUpon>
     </Compile>
@@ -175,7 +177,9 @@
       <DependentUpon>Models.tt</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\CategoryViewModel.cs" />
-    <Compile Include="ViewModels\ItemViewModel.cs" />
+    <Compile Include="ViewModels\ItemItem.cs" />
+    <Compile Include="ViewModels\ItemList.cs" />
+    <Compile Include="ViewModels\ItemPM.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-grid.css" />
@@ -247,8 +251,8 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Items\Index.cshtml" />
-    <Content Include="Views\Items\Edit.cshtml" />
-    <Content Include="Views\Items\Add.cshtml" />
+    <Content Include="Views\Items\ItemsResult.cshtml" />
+    <Content Include="Views\Items\Form.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -1,0 +1,59 @@
+﻿@model FirstDay.ViewModels.ItemPM
+@{
+    ViewBag.Title = "Item Form";
+    var selectList = new SelectList(ViewBag.Categories, "Id", "Name");
+}
+<button type="button" class="btn btn-warning">@Html.ActionLink("Back", "Index", new { }, new { @class = "text-light text-decoration-none" })</button>
+<form id="item-form" class="my-5">
+    @if (Model != null)
+    {
+        <input hidden id="Id" value="@Model.Id" />
+    }
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        @Html.ValidationMessageFor(e => e.Name, "", new { @class = "text-danger" })
+        @Html.TextBoxFor(e => e.Name, new { @class = "form-control" })
+        @*<input class="form-control" id="name" type="text" name="search" />*@
+    </div>
+    <div class="mb-3">
+        <label for="categoryId" class="form-label">Category</label>
+        @Html.ValidationMessageFor(e => e.CategoryId, "", new { @class = "text-danger" })
+        @Html.DropDownList("categoryId", selectList, "select a category", new { @class = "form-control" })
+    </div>
+    <div class="mb-3">
+        <label for="count" class="form-label">Count</label>
+        @Html.ValidationMessageFor(e => e.Count, "", new { @class = "text-danger" })
+        @Html.TextBoxFor(e => e.Count, new { @class = "form-control" })
+        @*<input class="form-control" id="count" type="number" name="count" />*@
+    </div>
+    <button class="btn btn-primary" type="submit">Save</button>
+</form>
+@section Scripts{
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $(document).ready(function () {
+
+            $("#item-form").submit(function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const name = $("#Name").val();
+                const categoryId = $("#categoryId").val();
+                const count = $("#Count").val();
+                const params = { name, categoryId, count };
+                if ($("#Id").length > 0) {
+                    params.Id = $("#Id").val();
+                }
+
+                console.log(params);
+                $.post("https://localhost:44396/Items/Save", params)
+                    .done(function () {
+                        alert("item Successfuly saved");
+                    })
+                    .fail(function () {
+                        alert("item failed to save");
+                    })
+
+            })
+        });
+    </script>
+}

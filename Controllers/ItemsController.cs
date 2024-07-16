@@ -1,4 +1,5 @@
-﻿using FirstDay.ViewModels;
+﻿using FirstDay.Handlers;
+using FirstDay.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -6,105 +7,119 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using System.Web.Http.Results;
 using System.Web.Mvc;
 
 namespace FirstDay.Controllers
 {
     public class ItemsController : Controller
     {
-        private readonly FirstDayContext _context;
+        //private readonly FirstDayContext _context;
+        private readonly ItemHandler _itemHandler;
+        private readonly CategoryHandler _categoryHandler;
         public ItemsController()
         {
-            _context = new FirstDayContext();
+            //_context = new FirstDayContext();
+            _itemHandler = new ItemHandler();
+            _categoryHandler= new CategoryHandler();
         }
-        public async Task<ActionResult> Index(string search, int? categoryId)
+        public async Task<ActionResult> Index()
         {
-            var categories= await _context.Categories.ToListAsync();
-            var categoriesVm=new List<CategoryViewModel>();
-            foreach(var category in categories)
-            {
-                categoriesVm.Add(new CategoryViewModel(category));
-            }
-            ViewBag.Categories = categoriesVm;
-            IQueryable<Item> itemsQuery=_context.Items;
-            if (search != null)
-            {
-                itemsQuery=itemsQuery.Where(e=>e.Name.Contains(search));
-            }
-            if(categoryId != null)
-            {
-                itemsQuery=itemsQuery.Where(e=>e.CategoryId==categoryId);
-            }
+            //var itemList=new ItemList();
+            //var categories= await _context.Categories.ToListAsync();
+            //var categoriesVm=new List<CategoryViewModel>();
+            //foreach (var category in categories)
+            //{
+            //    categoriesVm.Add(new CategoryViewModel(category));
+            //}
+            ViewBag.Categories = await _categoryHandler.GetList();
 
-            var items = await itemsQuery.Join(_context.Categories,i=>i.CategoryId,c=>c.Id,(item,category)=>new { Item=item, CategoryName=category.Name}).ToListAsync();
-            var itemsVm = new List<ItemViewModel>();
-            foreach (var itemData in items)
-            {
-                itemsVm.Add(new ItemViewModel(itemData.Item) { CategoryName=itemData.CategoryName});
-            }
-            
 
-            return View(itemsVm);
+            //var items = await _context.Items.Join(_context.Categories,i=>i.CategoryId,c=>c.Id,(item,category)=>new { Item=item, CategoryName=category.Name}).ToListAsync();
+            //foreach (var itemData in items)
+            //{
+            //    itemList.Items.Add(new ItemItem(itemData.Item) { CategoryName=itemData.CategoryName});
+            //}
+            var itemList =await _itemHandler.GetList();
+
+            return View(itemList);
         }
-        public async Task<ActionResult> Add()
+
+        [HttpPost]
+        public async Task<ActionResult> Index(ItemList itemList)
         {
-            var categories = await _context.Categories.ToListAsync();
-            var categoriesVm = new List<CategoryViewModel>();
-            foreach (var category in categories)
+            //IQueryable<Item> itemsQuery = _context.Items;
+            //if (itemList.Search != null)
+            //{
+            //    itemsQuery = itemsQuery.Where(e => e.Name.Contains(itemList.Search));
+            //}
+            //if (itemList.CategoryId != null)
+            //{
+            //    itemsQuery = itemsQuery.Where(e => e.CategoryId == itemList.CategoryId);
+            //}
+
+            //var items = await itemsQuery.Join(_context.Categories, i => i.CategoryId, c => c.Id, (item, category) => new { Item = item, CategoryName = category.Name }).ToListAsync();
+
+            //foreach (var itemData in items)
+            //{
+            //    itemList.Items.Add(new ItemItem(itemData.Item) { CategoryName = itemData.CategoryName });
+            //}
+            await _itemHandler.GetList(itemList);
+            return PartialView("ItemsResult",itemList);
+        }
+        public async Task<ActionResult> Form(int? id)
+        {
+            //var categories = await _context.Categories.ToListAsync();
+            //var categoriesVm = new List<CategoryViewModel>();
+            //foreach (var category in categories)
+            //{
+            //    categoriesVm.Add(new CategoryViewModel(category));
+            //}
+            ViewBag.Categories = await _categoryHandler.GetList();
+            if (id.HasValue)
             {
-                categoriesVm.Add(new CategoryViewModel(category));
+                //var item = await _context.Items.FindAsync(id);
+                //var itemPM = new ItemPM(item);
+                var itemPM= await _itemHandler.GetSingle(id.Value);
+                return View(itemPM);
             }
-            ViewBag.Categories = categoriesVm;
             return View();
         }
         [HttpPost]
-        public async Task<ActionResult> Add(ItemViewModel itemViewModel)
+        public async Task<ActionResult> Save(ItemPM itemPM)
         {
             if (ModelState.IsValid)
             {
-                var item = itemViewModel.toEntity();
-                 _context.Items.Add(item);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
+                var result=await _itemHandler.Save(itemPM);
+                if (result)
+                {
+                    return new HttpStatusCodeResult(200);
+                }
+                //if (itemPM.Id.HasValue)
+                //{
+                //    var item = await _context.Items.FindAsync(itemPM.Id);
+                //    item.Name = itemPM.Name;
+                //    item.Count = itemPM.Count;
+                //    item.CategoryId = itemPM.CategoryId;
+                //}
+                //else
+                //{
+                //    var item = itemPM.toEntity();
+                //    _context.Items.Add(item);
+                //}
+                //await _context.SaveChangesAsync();
+                //return new HttpStatusCodeResult(200);
             }
-            return View(itemViewModel);
+            return new HttpStatusCodeResult(400);
+
         }
-        public async Task<ActionResult> Edit(int id)
-        {
-            var categories = await _context.Categories.ToListAsync();
-            var categoriesVm = new List<CategoryViewModel>();
-            foreach (var category in categories)
-            {
-                categoriesVm.Add(new CategoryViewModel(category));
-            }
-            ViewBag.Categories = categoriesVm;
-            var item = await _context.Items.FindAsync(id);
-            var itemVm= new ItemViewModel(item);
-            return View(itemVm);
-        }
-        [HttpPost]
-        public async Task<ActionResult> Edit(ItemViewModel itemViewModel)
-        {
-            if(ModelState.IsValid)
-            {
-                var item= await _context.Items.FindAsync(itemViewModel.Id);
-                item.Name=itemViewModel.Name;
-                item.Count=itemViewModel.Count;
-                item.CategoryId=itemViewModel.CategoryId;
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
-            return View(itemViewModel);
-        }
+        
         public async Task<ActionResult> Delete(int id)
         {
-            var item = await _context.Items.FindAsync(id);
-            if(item != null)
-            {
-                _context.Items.Remove(item);
-                await _context.SaveChangesAsync();
-            }
-            return RedirectToAction("Index");
+            if(await _itemHandler.Delete(id))
+                return new HttpStatusCodeResult(200);
+            else
+               return new HttpStatusCodeResult(400);
         }
     }
 }
