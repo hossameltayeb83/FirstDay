@@ -15,12 +15,12 @@ namespace FirstDay.Handlers
         {
             _context = new FirstDayContext();
         }
-        public async Task<ItemList> GetList()
-        {
-            var itemList=new ItemList();
-            await GetList(itemList);
-            return itemList;
-        }
+        //public async Task<ItemList> GetList()
+        //{
+        //    var itemList=new ItemList();
+        //    await GetList(itemList);
+        //    return itemList;
+        //}
         
         public async Task GetList(ItemList itemList)
         {

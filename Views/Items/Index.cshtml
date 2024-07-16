@@ -30,21 +30,24 @@
 @section Scripts{
     <script>
         $(document).ready(function () {
-            $(".delete-button").click(function () {
-                if (!confirm("Do you want to delete")) {
-                    return false;
-                } else {
-                    const id = $(this).attr("id");
-                    $.get("https://localhost:44396/Items/Delete", {
-                        id: id
-                    }).done(function () {
-                        $.post("https://localhost:44396/Items/Index")
-                            .done(function (data) {
-                                $("#items").html(data);
-                            })
-                    });
-                }
-            });
+            function registerDeleteEvents() {
+                $(".delete-button").click(function () {
+                    if (!confirm("Do you want to delete")) {
+                        return false;
+                    } else {
+                        const id = $(this).attr("id");
+                        $.get("https://localhost:44396/Items/Delete", {
+                            id: id
+                        }).done(function () {
+                            $.post("https://localhost:44396/Items/Index")
+                                .done(function (data) {
+                                    $("#items").html(data);
+                                })
+                        });
+                    }
+                });
+            }
+            registerDeleteEvents();
             $("#search-form").submit(function (e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -61,6 +64,7 @@
                 $.post("https://localhost:44396/Items/Index", params)
                     .done(function (data) {
                         $("#items").html(data);
+                        registerDeleteEvents();
                 })
             })
             
