@@ -1,0 +1,56 @@
+﻿@model IEnumerable<FirstDay.ViewModels.ItemViewModel>
+@{
+    ViewBag.Title = "Index";
+    var selectList = new SelectList(ViewBag.Categories, "Id", "Name");
+
+}
+
+<h2>Index</h2>
+@using (Html.BeginForm("Index", "Items", FormMethod.Get, new { @class = "my-5" }))
+{
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <input class="form-control" id="name" type="text" name="search" />
+    </div>
+    <div class="mb-3">
+        <label for="categoryId" class="form-label">Category</label>
+        @Html.DropDownList("categoryId", selectList, "select a category", new { @class = "form-control" })
+    </div>
+
+    <button class="btn btn-primary" type="submit">Search</button>
+}
+<td><button type="button" class="btn btn-success">@Html.ActionLink("Add", "Add", new {},new { @class = "text-light text-decoration-none" })</button></td>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Count</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Name</td>
+                <td>@item.CategoryName</td>
+                <td>@item.Count</td>
+                <td><button type="button" class="btn btn-info">@Html.ActionLink("Edit", "Edit", new { id = item.Id }, new { @class = "text-dark text-decoration-none"  })</button></td>
+                <td><button type="button" class="btn btn-danger">@Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "text-light text-decoration-none" ,@id="delete"})</button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $("#delete").click(function () {
+                if (!confirm("Do you want to delete")) {
+                    return false;
+                }
+            });
+        });
+    </script>
+    }
