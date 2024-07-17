@@ -16,15 +16,30 @@
         <label for="categoryId" class="form-label">Category</label>
         @Html.DropDownList("categoryId", selectList, "select a category", new { @class = "form-control",@id="category" })
     </div>
-
-    <button class="btn btn-primary" type="submit">Search</button>
+    <div class="mb-3">
+        <input hidden name="SortDirection" value="" id="SortDirection"/>
+        <label for="Sort" class="form-label">sortBy</label>
+        <select class="form-control" name="SortColumn" id="sort">
+            <option value>Select a Column to Sort</option>
+            @foreach (var propName in ViewBag.Columns)
+            {
+                <option value="@propName" direction="Ascending">
+                    @propName - Ascending
+                </option>
+                <option value="@propName" direction="Descending">
+                    @propName - Descending
+                </option>
+            }
+        </select>
+    </div>
+    <button class="btn btn-primary" type="submit">Filter</button>
 </form>
 
 @*<td><button type="button" class="btn btn-success">@Html.ActionLink("Add", "Add", new {},new { @class = "text-light text-decoration-none" })</button></td>*@
 <button type="button" class="btn btn-success">@Html.ActionLink("Add", "Form", new {},new { @class = "text-light text-decoration-none" })</button>
 <div id="items">
 
-    @Html.Partial("ItemsResult")
+    @Html.Partial("List")
 </div>
 
 @section Scripts{
@@ -51,16 +66,13 @@
             $("#search-form").submit(function (e) {
                 e.preventDefault();
                 e.stopPropagation();
-                const search = $("#search").val();
-                const categoryId = $("#category").val();
-                const params = {};
-                if (search) {
-                    params.search = search;
+                const sort = $("#sort");
+                if (sort.val()) {
+                    const selectedOption = sort.find(":selected");
+                    $("#SortDirection").val(selectedOption.attr("direction")) 
                 }
-                if (categoryId) {
-                    params.categoryId=categoryId
-                }
-                console.log(search, categoryId, params);
+                const params = $(this).serialize();
+                console.log(params);
                 $.post("https://localhost:44396/Items/Index", params)
                     .done(function (data) {
                         $("#items").html(data);

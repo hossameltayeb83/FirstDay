@@ -8,6 +8,7 @@
         <EntityTypeShape EntityType="FirstDayModel.Category" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="FirstDayModel.Item" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="FirstDayModel.sysdiagram" Width="1.5" PointX="0.75" PointY="3.75" />
+        <AssociationConnector Association="FirstDayModel.FK_Items_Categories" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

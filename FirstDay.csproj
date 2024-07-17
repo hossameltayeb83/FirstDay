@@ -154,6 +154,7 @@
     </Compile>
     <Compile Include="Handlers\CategoryHandler.cs" />
     <Compile Include="Handlers\ItemHandler.cs" />
+    <Compile Include="Helpers\QueryableExtensions.cs" />
     <Compile Include="Item.cs">
       <DependentUpon>Models.tt</DependentUpon>
     </Compile>
@@ -251,7 +252,7 @@
     <Content Include="Views\Home\Contact.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Items\Index.cshtml" />
-    <Content Include="Views\Items\ItemsResult.cshtml" />
+    <Content Include="Views\Items\List.cshtml" />
     <Content Include="Views\Items\Form.cshtml" />
   </ItemGroup>
   <ItemGroup>

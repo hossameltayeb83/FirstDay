@@ -24,6 +24,16 @@ namespace FirstDay.Controllers
         public async Task<ActionResult> Index()
         {
             ViewBag.Categories = await _categoryHandler.GetList();
+            var type= typeof(ItemItem);
+            var columns= new List<string>();
+            foreach(var prop in type.GetProperties())
+            {
+                if (prop.Name != "Id"&&prop.Name!="CategoryName")
+                {
+                    columns.Add(prop.Name);
+                }
+            }
+            ViewBag.Columns= columns;
             var itemList= new ItemList();
             await _itemHandler.GetList(itemList);
             return View(itemList);
@@ -33,7 +43,7 @@ namespace FirstDay.Controllers
         public async Task<ActionResult> Index(ItemList itemList)
         {
             await _itemHandler.GetList(itemList);
-            return PartialView("ItemsResult",itemList);
+            return PartialView("List",itemList);
         }
         public async Task<ActionResult> Form(int? id)
         {

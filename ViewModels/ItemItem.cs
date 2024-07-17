@@ -20,6 +20,7 @@ namespace FirstDay.ViewModels
             Id = item.Id;
             Name = item.Name;
             Count = item.Count;
+            CategoryName=item.Category.Name;
         }
 
 

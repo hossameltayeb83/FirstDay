@@ -1,8 +1,10 @@
-﻿using FirstDay.ViewModels;
+﻿using FirstDay.Helpers;
+using FirstDay.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using System.Web;
 
@@ -15,12 +17,6 @@ namespace FirstDay.Handlers
         {
             _context = new FirstDayContext();
         }
-        //public async Task<ItemList> GetList()
-        //{
-        //    var itemList=new ItemList();
-        //    await GetList(itemList);
-        //    return itemList;
-        //}
         
         public async Task GetList(ItemList itemList)
         {
@@ -33,12 +29,40 @@ namespace FirstDay.Handlers
             {
                 itemsQuery = itemsQuery.Where(e => e.CategoryId == itemList.CategoryId);
             }
-
-            var items = await itemsQuery.Join(_context.Categories, i => i.CategoryId, c => c.Id, (item, category) => new { Item = item, CategoryName = category.Name }).ToListAsync();
-
-            foreach (var itemData in items)
+            if(itemList.SortColumn != null)
             {
-                itemList.Items.Add(new ItemItem(itemData.Item) { CategoryName = itemData.CategoryName });
+                //var propertyName = typeof(ItemItem).GetProperty(itemList.SortColumn).Name;
+                //bool asc= itemList.SortDirection==SortDirection.Ascending;
+                //switch (itemList.SortColumn)
+                //{
+                //    case "Name":
+                //        itemsQuery= asc? itemsQuery.OrderBy(e=>e.Name):itemsQuery.OrderByDescending(e=>e.Name);
+                //        break;
+                //    case "Count":
+                //        itemsQuery = asc ? itemsQuery.OrderBy(e => e.Count) : itemsQuery.OrderByDescending(e => e.Count);
+                //        break;
+                //    case "CategoryName":
+                //        itemsQuery = asc ? itemsQuery.OrderBy(e => e.Category.Name) : itemsQuery.OrderByDescending(e => e.Category.Name);
+                //        break;
+                //}
+                if(typeof(Item).GetProperty(itemList.SortColumn) != null)
+                {
+                    itemsQuery = itemsQuery.OrderByProperty(itemList.SortColumn,itemList.SortDirection);
+                }
+                //else if(itemList.SortColumn=="CategoryName")
+                //{
+                //    itemsQuery = itemsQuery.OrderByNavigationProperty("Name","Category",itemList.SortDirection);
+                //}
+
+            }
+
+            
+            var items = await itemsQuery.Include(e => e.Category).ToListAsync();
+            
+
+            foreach (var item in items)
+            {
+                itemList.Items.Add(new ItemItem(item));
             }
             
         }

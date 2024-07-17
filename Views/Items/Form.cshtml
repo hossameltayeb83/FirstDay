@@ -7,7 +7,7 @@
 <form id="item-form" class="my-5">
     @if (Model != null)
     {
-        <input hidden id="Id" value="@Model.Id" />
+        <input hidden name="id" value="@Model.Id" />
     }
     <div class="mb-3">
         <label for="name" class="form-label">Name</label>
@@ -36,15 +36,7 @@
             $("#item-form").submit(function (e) {
                 e.preventDefault();
                 e.stopPropagation();
-                const name = $("#Name").val();
-                const categoryId = $("#categoryId").val();
-                const count = $("#Count").val();
-                const params = { name, categoryId, count };
-                if ($("#Id").length > 0) {
-                    params.Id = $("#Id").val();
-                }
-
-                console.log(params);
+                const params = $(this).serialize();
                 $.post("https://localhost:44396/Items/Save", params)
                     .done(function () {
                         alert("item Successfuly saved");
@@ -52,7 +44,6 @@
                     .fail(function () {
                         alert("item failed to save");
                     })
-
             })
         });
     </script>
