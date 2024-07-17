@@ -31,40 +31,22 @@ namespace FirstDay.Handlers
             }
             if(itemList.SortColumn != null)
             {
-                //var propertyName = typeof(ItemItem).GetProperty(itemList.SortColumn).Name;
-                //bool asc= itemList.SortDirection==SortDirection.Ascending;
-                //switch (itemList.SortColumn)
-                //{
-                //    case "Name":
-                //        itemsQuery= asc? itemsQuery.OrderBy(e=>e.Name):itemsQuery.OrderByDescending(e=>e.Name);
-                //        break;
-                //    case "Count":
-                //        itemsQuery = asc ? itemsQuery.OrderBy(e => e.Count) : itemsQuery.OrderByDescending(e => e.Count);
-                //        break;
-                //    case "CategoryName":
-                //        itemsQuery = asc ? itemsQuery.OrderBy(e => e.Category.Name) : itemsQuery.OrderByDescending(e => e.Category.Name);
-                //        break;
-                //}
                 if(typeof(Item).GetProperty(itemList.SortColumn) != null)
                 {
                     itemsQuery = itemsQuery.OrderByProperty(itemList.SortColumn,itemList.SortDirection);
                 }
-                //else if(itemList.SortColumn=="CategoryName")
-                //{
-                //    itemsQuery = itemsQuery.OrderByNavigationProperty("Name","Category",itemList.SortDirection);
-                //}
-
+                else if (itemList.SortColumn == "CategoryName")
+                {
+                    itemsQuery = itemsQuery.OrderByNavigationProperty("Name", "Category", itemList.SortDirection);
+                }
             }
 
-            
             var items = await itemsQuery.Include(e => e.Category).ToListAsync();
-            
 
             foreach (var item in items)
             {
                 itemList.Items.Add(new ItemItem(item));
             }
-            
         }
         public async Task<ItemPM> GetSingle(int id)
         {

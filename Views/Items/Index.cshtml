@@ -32,16 +32,25 @@
             }
         </select>
     </div>
-    <button class="btn btn-primary" type="submit">Filter</button>
+    <button class="btn btn-primary" type="submit">Search</button>
 </form>
 
-@*<td><button type="button" class="btn btn-success">@Html.ActionLink("Add", "Add", new {},new { @class = "text-light text-decoration-none" })</button></td>*@
+
 <button type="button" class="btn btn-success">@Html.ActionLink("Add", "Form", new {},new { @class = "text-light text-decoration-none" })</button>
-<div id="items">
 
-    @Html.Partial("List")
-</div>
-
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Count</th>
+            <th>Category</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @Html.Partial("List")
+    </tbody>
+</table>
 @section Scripts{
     <script>
         $(document).ready(function () {
@@ -75,11 +84,13 @@
                 console.log(params);
                 $.post("https://localhost:44396/Items/Index", params)
                     .done(function (data) {
-                        $("#items").html(data);
+                        $("tbody").html(data);
                         registerDeleteEvents();
                 })
             })
-            
+            $("#sort").change(function (e) {
+                $("#search-form").submit()
+            })
         });
     </script>
     }

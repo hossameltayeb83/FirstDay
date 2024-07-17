@@ -28,7 +28,8 @@ namespace FirstDay.Controllers
             var columns= new List<string>();
             foreach(var prop in type.GetProperties())
             {
-                if (prop.Name != "Id"&&prop.Name!="CategoryName")
+                //&& prop.Name != "CategoryName"
+                if (prop.Name != "Id")
                 {
                     columns.Add(prop.Name);
                 }
