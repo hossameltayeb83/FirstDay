@@ -17,7 +17,14 @@ namespace FirstDay.Handlers
         {
             _context = new FirstDayContext();
         }
-        
+        public async Task<List<string>> GetSearchList(string search)
+        {
+            if(search == null)
+            {
+                return await _context.Items.Select(e=>e.Name).ToListAsync();
+            }
+            return await _context.Items.Where(e=>e.Name.Contains(search)).Select(e=>e.Name).ToListAsync();
+        }
         public async Task GetList(ItemList itemList)
         {
             IQueryable<Item> itemsQuery = _context.Items;

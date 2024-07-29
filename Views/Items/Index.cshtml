@@ -14,10 +14,10 @@
     </div>
     <div class="mb-3">
         <label for="categoryId" class="form-label">Category</label>
-        @Html.DropDownList("categoryId", selectList, "select a category", new { @class = "form-control",@id="category" })
+        @Html.DropDownList("categoryId", selectList, "select a category", new { @class = "form-control", @id = "category" })
     </div>
     <div class="mb-3">
-        <input hidden name="SortDirection" value="" id="SortDirection"/>
+        <input hidden name="SortDirection" value="" id="SortDirection" />
         <label for="Sort" class="form-label">sortBy</label>
         <select class="form-control" name="SortColumn" id="sort">
             <option value>Select a Column to Sort</option>
@@ -36,7 +36,7 @@
 </form>
 
 
-<button type="button" class="btn btn-success">@Html.ActionLink("Add", "Form", new {},new { @class = "text-light text-decoration-none" })</button>
+<button type="button" class="btn btn-success">@Html.ActionLink("Add", "Form", new { }, new { @class = "text-light text-decoration-none" })</button>
 
 <table class="table">
     <thead>
@@ -52,6 +52,7 @@
     </tbody>
 </table>
 @section Scripts{
+    <script src="https://code.jquery.com/ui/1.13.3/jquery-ui.js"></script>
     <script>
         $(document).ready(function () {
             function registerDeleteEvents() {
@@ -78,7 +79,7 @@
                 const sort = $("#sort");
                 if (sort.val()) {
                     const selectedOption = sort.find(":selected");
-                    $("#SortDirection").val(selectedOption.attr("direction")) 
+                    $("#SortDirection").val(selectedOption.attr("direction"))
                 }
                 const params = $(this).serialize();
                 console.log(params);
@@ -86,11 +87,19 @@
                     .done(function (data) {
                         $("tbody").html(data);
                         registerDeleteEvents();
-                })
+                    })
             })
             $("#sort").change(function (e) {
                 $("#search-form").submit()
             })
+            $("#search").autocomplete({
+                source: function (request,response) {
+                    $.get("https://localhost:44396/Items/JsonList", { search: request.term })
+                        .done(function (data) {
+                            response(data);
+                        })
+                }
+            });
         });
     </script>
-    }
+}

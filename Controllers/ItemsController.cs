@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -77,6 +78,13 @@ namespace FirstDay.Controllers
                 return new HttpStatusCodeResult(200);
             else
                return new HttpStatusCodeResult(400);
+        }
+        public async Task<JsonResult> JsonList(string search)
+        {
+
+                var result= await _itemHandler.GetSearchList(search);
+                return Json(result,JsonRequestBehavior.AllowGet);    
+
         }
     }
 }
